@@ -14,6 +14,12 @@ RUN apt-get update \
     && rm -f snowplow* \
     && mv keep_${JAR_FILE} snowplow-lzo-s3-sink.jar
 
-ENTRYPOINT ["/usr/bin/java", "-jar", "snowplow-lzo-s3-sink.jar", "--config", "/etc/snowplow/s3-sink.conf"]
+RUN easy_install envtpl
 
+COPY config/s3-sink.conf.tpl /etc/snowplow/s3-sink.conf.tpl
+
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 
