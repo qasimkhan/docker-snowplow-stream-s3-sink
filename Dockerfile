@@ -14,6 +14,11 @@ RUN apt-get update \
     && rm -f snowplow* \
     && mv keep_${JAR_FILE} snowplow-lzo-s3-sink.jar
 
+RUN apt-get install -y make \
+    build-essential \
+    python-setuptools \
+    python2.7-dev
+
 RUN easy_install envtpl
 
 COPY config/s3-sink.conf.tpl /etc/snowplow/s3-sink.conf.tpl
