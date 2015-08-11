@@ -54,9 +54,9 @@ sink {
   # - the number of stored records exceeds record-limit or
   # - the time in milliseconds since it was last emptied exceeds time-limit
   buffer {
-    byte-limit: 4000000 # 4 mb
-    record-limit: 500 # 500 records
-    time-limit: 60000 # 1 minute
+    byte-limit: {{ BUFFER_BYTE_LIMIT | default(4000000) }} # 4 mb
+    record-limit: {{ BUFFER_RECORD_LIMIT | default(500) }} # 500 records
+    time-limit: {{ BUFFER_TIME_LIMIT | default(60000) }}   # 1 minute
   }
 
 }
