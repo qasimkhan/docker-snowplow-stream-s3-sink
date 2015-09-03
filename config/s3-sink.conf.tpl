@@ -25,6 +25,9 @@ sink {
       # Note: This only affects the first run of this application
       # on a stream.
       initial-position: "TRIM_HORIZON"
+
+      # Maximum number of records to read per GetRecords call
+      max-records: {{ sinkKinesisMaxRecords | default(1000) }}
     }
 
     out {
@@ -46,6 +49,13 @@ sink {
     endpoint: "http://s3.amazonaws.com"
     region: "{{ AWS_REGION }}"
     bucket: "{{ SNOWPLOW_S3_SINK }}"
+
+    # Format is one of lzo or gzip
+    # Note, that you can use gzip only for enriched data stream.
+    format: "{{ sinkKinesisFormat | default("gzip") }}"
+
+    # Maximum Timeout that the application is allowed to fail for
+    max-timeout: {{ sinkKinesisMaxTimeout| default(6000) }}
   }
 
   # Events are accumulated in a buffer before being sent to S3.
@@ -59,4 +69,9 @@ sink {
     time-limit: {{ BUFFER_TIME_LIMIT | default(60000) }}   # 1 minute
   }
 
+  # Set the Logging Level for the S3 Sink
+  # Options: ERROR, WARN, INFO, DEBUG, TRACE
+  logging {
+    level: "{{ sinkLzoLogLevel | default("info") }}"
+  }
 }
