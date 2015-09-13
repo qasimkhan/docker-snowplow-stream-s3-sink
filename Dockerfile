@@ -2,8 +2,8 @@ FROM java:7-jre
 
 MAINTAINER Daniel Zohar <daniel@memrise.com>
 
-ENV SNOWPLOW_SOURCE_ZIP snowplow_kinesis_r65_scarlet_rosefinch.zip
-ENV JAR_FILE snowplow-lzo-s3-sink-0.2.0
+ENV SNOWPLOW_SOURCE_ZIP kinesis_s3_0.4.0.zip
+ENV JAR_FILE snowplow-kinesis-s3-0.4.0
 
 RUN apt-get update \
     && apt-get install -y lzop liblzo2-dev \
@@ -14,6 +14,17 @@ RUN apt-get update \
     && rm -f snowplow* \
     && mv keep_${JAR_FILE} snowplow-lzo-s3-sink.jar
 
-ENTRYPOINT ["/usr/bin/java", "-jar", "snowplow-lzo-s3-sink.jar", "--config", "/etc/snowplow/s3-sink.conf"]
+RUN apt-get install -y make \
+    build-essential \
+    python-setuptools \
+    python2.7-dev
 
+RUN easy_install envtpl
+
+COPY config/s3-sink.conf.tpl /etc/snowplow/s3-sink.conf.tpl
+
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 
